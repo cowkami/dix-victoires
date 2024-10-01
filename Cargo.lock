@@ -85,6 +85,7 @@ dependencies = [
 name = "dix-victoires"
 version = "0.1.0"
 dependencies = [
+ "web-sys",
  "yew",
 ]
 

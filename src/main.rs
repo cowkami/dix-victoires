@@ -64,9 +64,9 @@ impl Component for App {
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
         html! {
             <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-                <h1 class="text-2xl font-bold text-center text-gray-800">{"JPN -> US"}</h1>
+                <h1 class="text-2xl font-bold text-center text-gray-800">{"JPN ▶ US"}</h1>
                 <div class="mt-4">
-                    <div>{"住所"}</div>
+                    <div class="text-lg font-semibold text-gray-700">{"住所"}</div>
                     { self.view_input(ctx.link(), AddressFieldType::ZipCode, "郵便番号", "123-4567") }
                     { self.view_input(ctx.link(), AddressFieldType::Prefecture, "都道府県", "東京都") }
                     { self.view_input(ctx.link(), AddressFieldType::City, "市区町村", "千代田区") }
@@ -75,8 +75,10 @@ impl Component for App {
                     { self.view_input(ctx.link(), AddressFieldType::Room, "部屋番号", "101") }
                 </div>
                 <div class="mt-6">
-                    <h3 class="text-lg font-semibold text-gray-700">{"Address"}</h3>
-                    { self.view_output_address(ctx.link()) }
+                    <div class="text-lg font-semibold text-gray-700">{"Address"}</div>
+                    <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded">
+                        { self.view_output_address(ctx.link()) }
+                    </div>
                 </div>
             </div>
         }

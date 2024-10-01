@@ -191,8 +191,22 @@ impl App {
             room,
         } = self.state.clone();
         html! {
+            // 1st Row ： From: First name Last name
+            // 2nd Row ： Name of the building, like an apartment bldg. and room number (if applicable)
+            // 3rd Row ： House number, street, town/village
+            // 4th Row ： City, Prefecture/State/Province
+            // 5th Row ： Postal Code, Country
             <div>
-                { format!("#{} {} {} {} {} {}", zipcode.0, prefecture.0, city.0, address.0, building.0, room.0,) }
+                {
+                    format!("{} {}, {}, {}, {}, {}, Japan",
+                        building.render(),
+                        room.render(),
+                        address.render(),
+                        city.render(),
+                        prefecture.render(),
+                        zipcode.render(),
+                    )
+                }
             </div>
         }
     }

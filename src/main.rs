@@ -64,20 +64,22 @@ impl Component for App {
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
         html! {
             <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-                <h1 class="text-2xl font-bold text-center text-gray-800">{"JPN ▶ US"}</h1>
+                <div class="text-2xl font-bold text-center text-gray-800">{"JPN ▶ US"}</div>
                 <div class="mt-4">
-                    <div class="text-lg font-semibold text-gray-700">{"住所"}</div>
+                    <div class="text-lg font-semibold text-gray-700">{"JPN"}</div>
                     { self.view_input(ctx.link(), AddressFieldType::ZipCode, "郵便番号", "123-4567") }
                     { self.view_input(ctx.link(), AddressFieldType::Prefecture, "都道府県", "東京都") }
                     { self.view_input(ctx.link(), AddressFieldType::City, "市区町村", "千代田区") }
                     { self.view_input(ctx.link(), AddressFieldType::Address, "町域・番地", "1-1") }
-                    { self.view_input(ctx.link(), AddressFieldType::Building, "建物名", "Chateau") }
+                    { self.view_input(ctx.link(), AddressFieldType::Building, "建物名", "Chateau Noir") }
                     { self.view_input(ctx.link(), AddressFieldType::Room, "部屋番号", "101") }
                 </div>
                 <div class="mt-6">
-                    <div class="text-lg font-semibold text-gray-700">{"Address"}</div>
-                    <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded">
-                        { self.view_output_address(ctx.link()) }
+                    <div class="text-lg font-semibold text-gray-700">{"US"}</div>
+                    <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded-xl">
+                        <div class="text-lg font-semibold">
+                            { self.view_output_address(ctx.link()) }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -103,9 +105,9 @@ impl App {
         let oninput = self.handle_input(link, field);
         html! {
             <div class="mb-4">
-                <label class="block text-gray-600">{label}</label>
+                <label class="mb-2 block text-gray-600">{label}</label>
                 <input
-                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
+                    class="w-full pl-4 p-2 border border-gray-300 rounded-full focus:outline-none focus:ring focus:ring-blue-300"
                     placeholder={placeholder.to_string()}
                     {oninput}
                 />

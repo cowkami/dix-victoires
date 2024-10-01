@@ -63,23 +63,19 @@ impl Component for App {
 
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
         html! {
-            <div>
-                <h1>{"DixVictoires"}</h1>
-                <div>
-                    <div>
-                        <h3>{"住所"}</h3>
-                    </div>
-                    { self.view_input_zipcode(ctx.link()) }
-                    { self.view_input_prefecture(ctx.link()) }
-                    { self.view_input_city(ctx.link()) }
-                    { self.view_input_address(ctx.link()) }
-                    { self.view_input_building(ctx.link()) }
-                    { self.view_input_room(ctx.link()) }
+            <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
+                <h1 class="text-2xl font-bold text-center text-gray-800">{"JPN -> US"}</h1>
+                <div class="mt-4">
+                    <div>{"住所"}</div>
+                    { self.view_input(ctx.link(), AddressFieldType::ZipCode, "郵便番号", "123-4567") }
+                    { self.view_input(ctx.link(), AddressFieldType::Prefecture, "都道府県", "東京都") }
+                    { self.view_input(ctx.link(), AddressFieldType::City, "市区町村", "千代田区") }
+                    { self.view_input(ctx.link(), AddressFieldType::Address, "町域・番地", "1-1") }
+                    { self.view_input(ctx.link(), AddressFieldType::Building, "建物名", "Chateau") }
+                    { self.view_input(ctx.link(), AddressFieldType::Room, "部屋番号", "101") }
                 </div>
-                <div>
-                    <div>
-                        <h3>{"Address"}</h3>
-                    </div>
+                <div class="mt-6">
+                    <h3 class="text-lg font-semibold text-gray-700">{"Address"}</h3>
                     { self.view_output_address(ctx.link()) }
                 </div>
             </div>
@@ -95,86 +91,20 @@ impl App {
         })
     }
 
-    fn view_input_zipcode(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::ZipCode); // 関数化したoninputを呼び出す
+    fn view_input(
+        &self,
+        link: &Scope<Self>,
+        field: AddressFieldType,
+        label: &str,
+        placeholder: &str,
+    ) -> Html {
+        let oninput = self.handle_input(link, field);
         html! {
-            <div>
-                <label for="zipcode">{"郵便番号"}</label>
-                // todo: validate
+            <div class="mb-4">
+                <label class="block text-gray-600">{label}</label>
                 <input
-                    class="zipcode"
-                    placeholder="123-4567"
-                    {oninput}
-                />
-            </div>
-        }
-    }
-
-    fn view_input_prefecture(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::Prefecture);
-        html! {
-            <div>
-                <label for="prefecture">{"都道府県"}</label>
-                // todo: validate
-                <input
-                    class="prefecture"
-                    placeholder="東京都"
-                    {oninput}
-                />
-            </div>
-        }
-    }
-
-    fn view_input_city(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::City);
-        html! {
-            <div>
-                <label for="city">{"市区町村"}</label>
-                <input
-                    class="city"
-                    placeholder="千代田区"
-                    {oninput}
-                />
-            </div>
-        }
-    }
-
-    fn view_input_address(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::Address);
-        html! {
-            <div>
-                <label for="address">{"町域・番地"}</label>
-                <input
-                    class="address"
-                    placeholder="1-1"
-                    {oninput}
-                />
-            </div>
-        }
-    }
-
-    fn view_input_building(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::Building);
-        html! {
-            <div>
-                <label for="building">{"建物名"}</label>
-                <input
-                    class="building"
-                    placeholder="Chateau"
-                    {oninput}
-                />
-            </div>
-        }
-    }
-
-    fn view_input_room(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressFieldType::Room);
-        html! {
-            <div>
-                <label for="room">{"部屋番号"}</label>
-                <input
-                    class="room"
-                    placeholder="101"
+                    class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300"
+                    placeholder={placeholder.to_string()}
                     {oninput}
                 />
             </div>

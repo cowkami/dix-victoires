@@ -12,6 +12,7 @@ fn main() {
 
 pub enum Msg {
     Add(AddressFieldType, String),
+    NoOp,
 }
 
 struct App {
@@ -57,6 +58,9 @@ impl Component for App {
             Msg::Add(AddressFieldType::Room, value) => {
                 self.state.room = Room(value);
             }
+            Msg::NoOp => {
+                // Do nothing or handle as needed
+            }
         }
         true
     }
@@ -75,12 +79,7 @@ impl Component for App {
                     { self.view_input(ctx.link(), AddressFieldType::Room, "部屋番号", "101") }
                 </div>
                 <div class="mt-6">
-                    <div class="text-lg font-semibold text-gray-700">{"US"}</div>
-                    <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded-xl">
-                        <div class="text-lg font-semibold">
-                            { self.view_output_address(ctx.link()) }
-                        </div>
-                    </div>
+                    { self.view_output_address(ctx.link()) }
                 </div>
             </div>
         }
@@ -115,15 +114,7 @@ impl App {
         }
     }
 
-    fn view_output_address(&self, _link: &Scope<Self>) -> Html {
-        let State {
-            zipcode,
-            prefecture,
-            city,
-            address,
-            building,
-            room,
-        } = self.state.clone();
+    fn view_output_address(&self, link: &Scope<Self>) -> Html {
         html! {
             // 1st Row ： From: First name Last name
             // 2nd Row ： Name of the building, like an apartment bldg. and room number (if applicable)
@@ -131,17 +122,28 @@ impl App {
             // 4th Row ： City, Prefecture/State/Province
             // 5th Row ： Postal Code, Country
             <div>
-                {
-                    format!("{} {}, {}, {}, {}, {}, Japan",
-                        building.render(),
-                        room.render(),
-                        address.render(),
-                        city.render(),
-                        prefecture.render(),
-                        zipcode.render(),
-                    )
-                }
+                <div class="text-lg font-semibold text-gray-700">{"US"}</div>
+                <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded-xl">
+                    <div class="text-lg font-semibold">
+                        { self.state.render() }
+                    </div>
+                    <button
+                        onclick={self.copy_to_clipboard(link)}
+                        class="mt-2 p-2 bg-blue-500 text-white rounded"
+                    >
+                        {"Copy"}
+                    </button>
+                </div>
             </div>
         }
+    }
+
+    fn copy_to_clipboard(&self, link: &Scope<Self>) -> Callback<MouseEvent> {
+        let address = self.state.render();
+        link.callback(move |_| {
+            let clipboard = web_sys::window().unwrap().navigator().clipboard();
+            let _ = clipboard.write_text(&address);
+            Msg::NoOp
+        })
     }
 }

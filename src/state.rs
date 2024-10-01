@@ -8,6 +8,19 @@ pub struct State {
     pub room: Room,
 }
 
+impl State {
+    pub fn render(&self) -> String {
+        format!(
+            "{} {}, {}, {}, {}, {}, Japan",
+            self.building.render(),
+            self.room.render(),
+            self.address.render(),
+            self.city.render(),
+            self.prefecture.render(),
+            self.zipcode.render(),
+        )
+    }
+}
 #[derive(Debug, Clone)]
 pub enum AddressFieldType {
     ZipCode,

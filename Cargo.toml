@@ -12,4 +12,6 @@ web-sys = { version = "0.3", features = [
     "Node",
     "Event",
     "HtmlInputElement",
+    "Navigator",
+    "Clipboard",
 ] }

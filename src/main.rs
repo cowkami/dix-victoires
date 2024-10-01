@@ -11,7 +11,7 @@ fn main() {
 }
 
 pub enum Msg {
-    Add(AddressType, String),
+    Add(AddressFieldType, String),
 }
 
 struct App {
@@ -26,12 +26,12 @@ impl Component for App {
     fn create(_ctx: &yew::Context<Self>) -> Self {
         Self {
             state: State {
-                zipcode: "".to_string(),
-                prefecture: "".to_string(),
-                city: "".to_string(),
-                address: "".to_string(),
-                building: "".to_string(),
-                room: "".to_string(),
+                zipcode: ZipCode("".to_string()),
+                prefecture: Prefecture("".to_string()),
+                city: City("".to_string()),
+                address: Address("".to_string()),
+                building: Building("".to_string()),
+                room: Room("".to_string()),
             },
             focus_ref: NodeRef::default(),
         }
@@ -39,23 +39,23 @@ impl Component for App {
 
     fn update(&mut self, _ctx: &yew::Context<Self>, msg: Self::Message) -> bool {
         match msg {
-            Msg::Add(AddressType::ZipCode, value) => {
-                self.state.zipcode = value;
+            Msg::Add(AddressFieldType::ZipCode, value) => {
+                self.state.zipcode = ZipCode(value);
             }
-            Msg::Add(AddressType::Prefecture, value) => {
-                self.state.prefecture = value;
+            Msg::Add(AddressFieldType::Prefecture, value) => {
+                self.state.prefecture = Prefecture(value);
             }
-            Msg::Add(AddressType::City, value) => {
-                self.state.city = value;
+            Msg::Add(AddressFieldType::City, value) => {
+                self.state.city = City(value);
             }
-            Msg::Add(AddressType::Address, value) => {
-                self.state.address = value;
+            Msg::Add(AddressFieldType::Address, value) => {
+                self.state.address = Address(value);
             }
-            Msg::Add(AddressType::Building, value) => {
-                self.state.building = value;
+            Msg::Add(AddressFieldType::Building, value) => {
+                self.state.building = Building(value);
             }
-            Msg::Add(AddressType::Room, value) => {
-                self.state.room = value;
+            Msg::Add(AddressFieldType::Room, value) => {
+                self.state.room = Room(value);
             }
         }
         true
@@ -80,14 +80,7 @@ impl Component for App {
                     <div>
                         <h3>{"Address"}</h3>
                     </div>
-                    <div>
-                        { format!("#{}", &self.state.zipcode.to_string()) }
-                        { &self.state.prefecture.to_string() }
-                        { &self.state.city.to_string() }
-                        { &self.state.address.to_string() }
-                        { &self.state.building.to_string() }
-                        { &self.state.room.to_string() }
-                    </div>
+                    { self.view_output_address(ctx.link()) }
                 </div>
             </div>
         }
@@ -95,16 +88,15 @@ impl Component for App {
 }
 
 impl App {
-    fn handle_input(&self, link: &Scope<Self>, field: AddressType) -> Callback<InputEvent> {
+    fn handle_input(&self, link: &Scope<Self>, field: AddressFieldType) -> Callback<InputEvent> {
         link.batch_callback(move |e: InputEvent| {
             let input: HtmlInputElement = e.target_unchecked_into();
-            let value = input.value();
-            Some(Msg::Add(field.clone(), value))
+            Some(Msg::Add(field.clone(), input.value()))
         })
     }
 
     fn view_input_zipcode(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::ZipCode); // 関数化したoninputを呼び出す
+        let oninput = self.handle_input(link, AddressFieldType::ZipCode); // 関数化したoninputを呼び出す
         html! {
             <div>
                 <label for="zipcode">{"郵便番号"}</label>
@@ -119,7 +111,7 @@ impl App {
     }
 
     fn view_input_prefecture(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::Prefecture);
+        let oninput = self.handle_input(link, AddressFieldType::Prefecture);
         html! {
             <div>
                 <label for="prefecture">{"都道府県"}</label>
@@ -134,7 +126,7 @@ impl App {
     }
 
     fn view_input_city(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::City);
+        let oninput = self.handle_input(link, AddressFieldType::City);
         html! {
             <div>
                 <label for="city">{"市区町村"}</label>
@@ -148,7 +140,7 @@ impl App {
     }
 
     fn view_input_address(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::Address);
+        let oninput = self.handle_input(link, AddressFieldType::Address);
         html! {
             <div>
                 <label for="address">{"町域・番地"}</label>
@@ -162,13 +154,13 @@ impl App {
     }
 
     fn view_input_building(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::Building);
+        let oninput = self.handle_input(link, AddressFieldType::Building);
         html! {
             <div>
-                <label for="building">{"建物名・部屋番号"}</label>
+                <label for="building">{"建物名"}</label>
                 <input
                     class="building"
-                    placeholder="101"
+                    placeholder="Chateau"
                     {oninput}
                 />
             </div>
@@ -176,7 +168,7 @@ impl App {
     }
 
     fn view_input_room(&self, link: &Scope<Self>) -> Html {
-        let oninput = self.handle_input(link, AddressType::Room);
+        let oninput = self.handle_input(link, AddressFieldType::Room);
         html! {
             <div>
                 <label for="room">{"部屋番号"}</label>
@@ -185,6 +177,22 @@ impl App {
                     placeholder="101"
                     {oninput}
                 />
+            </div>
+        }
+    }
+
+    fn view_output_address(&self, _link: &Scope<Self>) -> Html {
+        let State {
+            zipcode,
+            prefecture,
+            city,
+            address,
+            building,
+            room,
+        } = self.state.clone();
+        html! {
+            <div>
+                { format!("#{} {} {} {} {} {}", zipcode.0, prefecture.0, city.0, address.0, building.0, room.0,) }
             </div>
         }
     }

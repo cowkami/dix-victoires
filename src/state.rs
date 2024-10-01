@@ -1,15 +1,15 @@
 #[derive(Debug, Clone)]
 pub struct State {
-    pub zipcode: String,
-    pub prefecture: String,
-    pub city: String,
-    pub address: String,
-    pub building: String,
-    pub room: String,
+    pub zipcode: ZipCode,
+    pub prefecture: Prefecture,
+    pub city: City,
+    pub address: Address,
+    pub building: Building,
+    pub room: Room,
 }
 
 #[derive(Debug, Clone)]
-pub enum AddressType {
+pub enum AddressFieldType {
     ZipCode,
     Prefecture,
     City,
@@ -17,3 +17,21 @@ pub enum AddressType {
     Building,
     Room,
 }
+
+#[derive(Debug, Clone)]
+pub struct ZipCode(pub String);
+
+#[derive(Debug, Clone)]
+pub struct Prefecture(pub String);
+
+#[derive(Debug, Clone)]
+pub struct City(pub String);
+
+#[derive(Debug, Clone)]
+pub struct Address(pub String);
+
+#[derive(Debug, Clone)]
+pub struct Building(pub String);
+
+#[derive(Debug, Clone)]
+pub struct Room(pub String);

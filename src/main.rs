@@ -116,11 +116,6 @@ impl App {
 
     fn view_output_address(&self, link: &Scope<Self>) -> Html {
         html! {
-            // 1st Row ： From: First name Last name
-            // 2nd Row ： Name of the building, like an apartment bldg. and room number (if applicable)
-            // 3rd Row ： House number, street, town/village
-            // 4th Row ： City, Prefecture/State/Province
-            // 5th Row ： Postal Code, Country
             <div>
                 <div class="text-lg font-semibold text-gray-700">{"US"}</div>
                 <div class="p-4 border-2 border-blue-500 bg-blue-100 rounded-xl">
@@ -130,7 +125,7 @@ impl App {
                     <div class="flex justify-end">
                         <button
                             onclick={self.copy_to_clipboard(link)}
-                            class="p-0"
+                            class="p-0 copy-button"
                         >
                             <svg
                                 class="h-8 w-8 text-gray-500"  width="12" height="12" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

@@ -71,12 +71,66 @@ impl Component for App {
                 <div class="text-2xl font-bold text-center text-gray-800">{"JPN ▶ US"}</div>
                 <div class="mt-4">
                     <div class="text-lg font-semibold text-gray-700">{"JPN"}</div>
-                    { self.view_input(ctx.link(), AddressFieldType::ZipCode, "郵便番号", "123-4567") }
-                    { self.view_input(ctx.link(), AddressFieldType::Prefecture, "都道府県", "東京都") }
-                    { self.view_input(ctx.link(), AddressFieldType::City, "市区町村", "千代田区") }
-                    { self.view_input(ctx.link(), AddressFieldType::Address, "町域・番地", "1-1") }
-                    { self.view_input(ctx.link(), AddressFieldType::Building, "建物名", "Chateau Noir") }
-                    { self.view_input(ctx.link(), AddressFieldType::Room, "部屋番号", "101") }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::ZipCode,
+                        "郵便番号",
+                        "123-4567",
+                        "tel",
+                        "numeric",
+                        "8",
+                      )
+                    }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::Prefecture,
+                        "都道府県",
+                        "東京都",
+                        "text",
+                        "text",
+                        "10",
+                      )
+                    }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::City,
+                        "市区町村",
+                        "千代田区",
+                        "text",
+                        "text",
+                        "30",
+                      )
+                    }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::Address,
+                        "町域・番地",
+                        "1-1",
+                        "text",
+                        "text",
+                        "30",
+                      )
+                    }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::Building,
+                        "建物名",
+                        "Chateau Noir",
+                        "text",
+                        "text",
+                        "30",
+                      )
+                    }
+                    { self.view_input(
+                        ctx.link(),
+                        AddressFieldType::Room,
+                        "部屋番号",
+                        "101",
+                        "text",
+                        "text",
+                        "30",
+                      )
+                    }
                 </div>
                 <div class="mt-6">
                     { self.view_output_address(ctx.link()) }
@@ -100,6 +154,9 @@ impl App {
         field: AddressFieldType,
         label: &str,
         placeholder: &str,
+        r#type: &str,
+        inputmode: &str,
+        maxlength: &str,
     ) -> Html {
         let oninput = self.handle_input(link, field);
         html! {
@@ -108,6 +165,9 @@ impl App {
                 <input
                     class="w-full pl-4 p-2 border border-gray-300 rounded-full focus:outline-none focus:ring focus:ring-blue-300"
                     placeholder={placeholder.to_string()}
+                    type={r#type.to_string()}
+                    inputmode={inputmode.to_string()}
+                    maxlength={maxlength.to_string()}
                     {oninput}
                 />
             </div>

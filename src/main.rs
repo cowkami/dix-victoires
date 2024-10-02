@@ -125,7 +125,7 @@ impl App {
                     <div class="flex justify-end">
                         <button
                             onclick={self.copy_to_clipboard(link)}
-                            class="p-0 copy-button"
+                            class="p-2 copy-button rounded-full"
                         >
                             <svg
                                 class="h-8 w-8 text-gray-500"  width="12" height="12" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">

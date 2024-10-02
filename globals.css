@@ -2,12 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes copy-animation {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
 
 .copy-button:active {
     animation: copy-animation 0.3s ease-in-out;
+}
+
+.animated-element {
+    animation: changeBackgroundColor 2s ease-in-out infinite;
+}
+
+@keyframes copy-animation {
+    0% {
+        transform: scale(1);
+        background-color: #ffffff;
+    }
+    50% {
+        transform: scale(1.2);
+        background-color: #f0f0f0;
+    }
+    100% {
+        transform: scale(1);
+        background-color: #ffffff;
+    }
+}
+
+input, textarea, select {
+  font-size: 16px;
 }

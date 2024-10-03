@@ -68,9 +68,13 @@ impl Component for App {
     fn view(&self, ctx: &yew::Context<Self>) -> Html {
         html! {
             <div class="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-md">
-                <div class="text-2xl font-bold text-center text-gray-800">{"JPN ▶ US"}</div>
+                <div class="text-2xl font-bold text-center text-gray-800">
+                    {"JPN ▶ US"}
+                </div>
                 <div class="mt-4">
-                    <div class="text-lg font-semibold text-gray-700">{"JPN"}</div>
+                    <div class="text-lg font-semibold text-gray-700">
+                        {"JPN"}
+                    </div>
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::ZipCode,

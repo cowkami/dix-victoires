@@ -49,6 +49,12 @@ impl AddressField for ZipCode {
     }
 }
 
+impl ZipCode {
+    pub fn to_digit(&self) -> String {
+        self.0.chars().filter(|c| c.is_digit(10)).collect()
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Prefecture(pub String);
 

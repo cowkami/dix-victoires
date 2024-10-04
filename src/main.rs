@@ -1,3 +1,4 @@
+mod db;
 mod state;
 
 use state::*;
@@ -42,6 +43,11 @@ impl Component for App {
         match msg {
             Msg::Add(AddressFieldType::ZipCode, value) => {
                 self.state.zipcode = ZipCode(value);
+
+                let area = db::Area::by_zipcode(self.state.zipcode.clone());
+                self.state.prefecture = area.prefecture;
+                self.state.city = area.city;
+                self.state.address = area.address;
             }
             Msg::Add(AddressFieldType::Prefecture, value) => {
                 self.state.prefecture = Prefecture(value);

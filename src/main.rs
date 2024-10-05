@@ -1,4 +1,4 @@
-mod db;
+mod area;
 mod state;
 
 use state::*;
@@ -44,10 +44,12 @@ impl Component for App {
             Msg::Add(AddressFieldType::ZipCode, value) => {
                 self.state.zipcode = ZipCode(value);
 
-                let area = db::Area::by_zipcode(self.state.zipcode.clone());
-                self.state.prefecture = area.prefecture;
-                self.state.city = area.city;
-                self.state.address = area.address;
+                let area = area::by_zipcode(&self.state.zipcode);
+                if let Some(area) = area {
+                    self.state.prefecture = Prefecture(area.prefecture.to_string());
+                    self.state.city = City(area.city.to_string());
+                    self.state.address = Address(area.address.to_string());
+                }
             }
             Msg::Add(AddressFieldType::Prefecture, value) => {
                 self.state.prefecture = Prefecture(value);
@@ -95,7 +97,7 @@ impl Component for App {
                         ctx.link(),
                         AddressFieldType::Prefecture,
                         "都道府県",
-                        "東京都",
+                        "Tokyo",
                         "text",
                         "text",
                         "10",
@@ -105,7 +107,7 @@ impl Component for App {
                         ctx.link(),
                         AddressFieldType::City,
                         "市区町村",
-                        "千代田区",
+                        "Chiyoda-ku",
                         "text",
                         "text",
                         "30",
@@ -115,7 +117,7 @@ impl Component for App {
                         ctx.link(),
                         AddressFieldType::Address,
                         "町域・番地",
-                        "1-1",
+                        "Nagata-cho 1-1",
                         "text",
                         "text",
                         "30",

@@ -55,6 +55,12 @@ impl ZipCode {
     }
 }
 
+impl From<&str> for ZipCode {
+    fn from(value: &str) -> Self {
+        ZipCode(value.to_string())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Prefecture(pub String);
 
@@ -65,6 +71,12 @@ impl AddressField for Prefecture {
 
     fn validate(&self) -> bool {
         true
+    }
+}
+
+impl From<&str> for Prefecture {
+    fn from(value: &str) -> Self {
+        Prefecture(value.to_string())
     }
 }
 
@@ -91,6 +103,12 @@ impl AddressField for City {
     }
 }
 
+impl From<&str> for City {
+    fn from(value: &str) -> Self {
+        City(value.to_string())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Address(pub String);
 
@@ -101,6 +119,12 @@ impl AddressField for Address {
 
     fn validate(&self) -> bool {
         true
+    }
+}
+
+impl From<&str> for Address {
+    fn from(value: &str) -> Self {
+        Address(value.to_string())
     }
 }
 
@@ -117,6 +141,12 @@ impl AddressField for Building {
     }
 }
 
+impl From<&str> for Building {
+    fn from(value: &str) -> Self {
+        Building(value.to_string())
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Room(pub String);
 
@@ -130,5 +160,11 @@ impl AddressField for Room {
 
     fn validate(&self) -> bool {
         true
+    }
+}
+
+impl From<&str> for Room {
+    fn from(value: &str) -> Self {
+        Room(value.to_string())
     }
 }

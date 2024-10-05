@@ -28,12 +28,12 @@ impl Component for App {
     fn create(_ctx: &yew::Context<Self>) -> Self {
         Self {
             state: State {
-                zipcode: ZipCode("".to_string()),
-                prefecture: Prefecture("".to_string()),
-                city: City("".to_string()),
-                address: Address("".to_string()),
-                building: Building("".to_string()),
-                room: Room("".to_string()),
+                zipcode: ZipCode::from(""),
+                prefecture: Prefecture::from(""),
+                city: City::from(""),
+                address: Address::from(""),
+                building: Building::from(""),
+                room: Room::from(""),
             },
             focus_ref: NodeRef::default(),
         }
@@ -46,9 +46,9 @@ impl Component for App {
 
                 let area = area::by_zipcode(&self.state.zipcode);
                 if let Some(area) = area {
-                    self.state.prefecture = Prefecture(area.prefecture.to_string());
-                    self.state.city = City(area.city.to_string());
-                    self.state.address = Address(area.address.to_string());
+                    self.state.prefecture = Prefecture::from(area.prefecture);
+                    self.state.city = City::from(area.city);
+                    self.state.address = Address::from(area.address);
                 }
             }
             Msg::Add(AddressFieldType::Prefecture, value) => {
@@ -86,6 +86,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::ZipCode,
+                        &self.state.zipcode.0,
                         "郵便番号",
                         "123-4567",
                         "tel",
@@ -96,6 +97,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::Prefecture,
+                        &self.state.prefecture.0,
                         "都道府県",
                         "Tokyo",
                         "text",
@@ -106,6 +108,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::City,
+                        &self.state.city.0,
                         "市区町村",
                         "Chiyoda-ku",
                         "text",
@@ -116,6 +119,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::Address,
+                        &self.state.address.0,
                         "町域・番地",
                         "Nagata-cho 1-1",
                         "text",
@@ -126,6 +130,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::Building,
+                        &self.state.building.0,
                         "建物名",
                         "Chateau Noir",
                         "text",
@@ -136,6 +141,7 @@ impl Component for App {
                     { self.view_input(
                         ctx.link(),
                         AddressFieldType::Room,
+                        &self.state.room.0,
                         "部屋番号",
                         "101",
                         "text",
@@ -164,6 +170,7 @@ impl App {
         &self,
         link: &Scope<Self>,
         field: AddressFieldType,
+        value: &str,
         label: &str,
         placeholder: &str,
         r#type: &str,
@@ -180,6 +187,7 @@ impl App {
                     type={r#type.to_string()}
                     inputmode={inputmode.to_string()}
                     maxlength={maxlength.to_string()}
+                    value={value.to_string()}
                     {oninput}
                 />
             </div>

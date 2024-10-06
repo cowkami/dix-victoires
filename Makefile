@@ -28,7 +28,7 @@ build: address.csv
 
 deploy: build
 	@echo "Deploying app..."
-	gsutil rsync -dr dist gs://dix-victoires
+	gsutil rsync -dr dist gs://www.10-victoires.com
 	@echo "Deploy completed!\n"
 
 .PHONY: clean

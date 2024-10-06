@@ -8,18 +8,7 @@ pub struct Area {
     pub address: &'static str,
 }
 
-static AREA: phf::Map<&'static str, Area> = phf_map! {
-    "1680031" => Area {
-        prefecture: "Tokyo",
-        city: "Suginami-ku",
-        address: "Asagaya",
-    },
-    "1550081" => Area {
-        prefecture: "Tokyo",
-        city: "Chiyoda-ku",
-        address: "Nagata-cho",
-    },
-};
+include!(concat!(env!("OUT_DIR"), "/area_table.rs"));
 
 // Example usage
 pub fn by_zipcode(zipcode: &ZipCode) -> Option<&'static Area> {

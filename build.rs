@@ -31,22 +31,23 @@ fn generate_area_table(source_path: PathBuf, dest_path: PathBuf) -> Result<(), &
         let row = df.get_row(i).expect("Failed to get row");
         println!("{:?}", row);
 
-        let zipcode = row.0[0].to_string();
-        let pref = row.0[4].to_string();
-        let city = row.0[5].to_string();
-        let town = row.0[6].to_string();
+        // capitalize
+        let zipcode = remove_quotes(row.0[0].to_string());
+        let pref = text_process(remove_to_fu_ken(row.0[4].to_string()));
+        let city = text_process(connect_city_suffix(row.0[5].to_string()));
+        let town = text_process(connect_city_suffix(row.0[6].to_string()));
 
         if zip_set.contains(&zipcode) {
             continue;
         }
 
         area_map.entry(
-            zipcode.clone().replace("\"", ""),
+            zipcode.clone(),
             format!(
                 r#"Area {{
-                    prefecture: {},
-                    city: {},
-                    address: {},
+                    prefecture: "{}",
+                    city: "{}",
+                    address: "{}",
                 }}"#,
                 pref, city, town,
             )
@@ -64,6 +65,44 @@ fn generate_area_table(source_path: PathBuf, dest_path: PathBuf) -> Result<(), &
 
     write!(&mut dest_file, ";\n").unwrap();
     Ok(())
+}
+
+fn text_process(s: String) -> String {
+    let s = remove_quotes(s);
+    let s = capitalize_words(s);
+    s
+}
+
+fn remove_quotes(s: String) -> String {
+    s.replace("\"", "")
+}
+
+fn remove_to_fu_ken(s: String) -> String {
+    s.replace(" TO", "").replace(" FU", "").replace(" KEN", "")
+}
+
+fn connect_city_suffix(s: String) -> String {
+    s
+    // s.replace(" SHI", "-shi")
+    //     .replace(" KU", "-ku")
+    //     .replace(" CHO", "-cho")
+    //     .replace(" GUN", "-gun")
+    //     .replace(" MURA", "-mura")
+    //     .replace(" MACHI", "-machi")
+}
+
+fn capitalize_words(s: String) -> String {
+    let ss = s.split_whitespace().collect::<Vec<&str>>();
+    let s = ss
+        .into_iter()
+        .map(|s| capitalize(s.to_string()))
+        .collect::<Vec<String>>()
+        .join(" ");
+    s
+}
+
+fn capitalize(s: String) -> String {
+    s[0..1].to_uppercase() + &s[1..].to_lowercase()
 }
 
 fn load_address_csv(path: PathBuf) -> Result<DataFrame, &'static str> {

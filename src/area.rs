@@ -1,5 +1,4 @@
 use crate::state::ZipCode;
-use phf::phf_map;
 
 #[derive(Debug, Clone)]
 pub struct Area {

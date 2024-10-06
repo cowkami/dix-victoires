@@ -1,16 +1,17 @@
-use serde::Deserialize;
+use polars::prelude::*;
 use std::collections::HashSet;
 use std::env;
 use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::io::{BufWriter, Write};
 use std::path::PathBuf;
+use std::sync::Arc;
 
 fn main() -> Result<(), &'static str> {
     let interim_dir = PathBuf::from("interim");
     let out_dir =
         PathBuf::from(env::var_os("OUT_DIR").expect("OUT_DIR environment variable not set"));
 
-    let source_path = interim_dir.join("address.jsonl");
+    let source_path = interim_dir.join("address.csv");
     let dest_path = out_dir.join("area_table.rs");
     generate_area_table(source_path, dest_path).expect("Failed to generate area table");
 
@@ -19,42 +20,39 @@ fn main() -> Result<(), &'static str> {
 }
 
 fn generate_area_table(source_path: PathBuf, dest_path: PathBuf) -> Result<(), &'static str> {
-    #[derive(Debug, Clone, Deserialize)]
-    struct Address {
-        // region_id: String,
-        zip: String,
-        pref_kana: String,
-        city_kana: String,
-        town_kana: String,
-    }
-
-    let mut source_file = BufReader::new(File::open(&source_path).unwrap());
     let mut dest_file = BufWriter::new(File::create(&dest_path).unwrap());
 
     let mut area_map = phf_codegen::Map::new();
-    let mut line = String::new();
     let mut zip_set: HashSet<String> = HashSet::new();
-    while source_file.read_line(&mut line).unwrap() > 0 {
-        let address: Address = serde_json::from_str(&line).unwrap();
-        line.clear(); // Clear the line for the next iteration
 
-        if zip_set.contains(&address.zip) {
+    let df = load_address_csv(source_path).expect("Failed to load address CSV");
+    // iter rows
+    for i in 0..df.height() {
+        let row = df.get_row(i).expect("Failed to get row");
+        println!("{:?}", row);
+
+        let zipcode = row.0[0].to_string();
+        let pref = row.0[4].to_string();
+        let city = row.0[5].to_string();
+        let town = row.0[6].to_string();
+
+        if zip_set.contains(&zipcode) {
             continue;
         }
-        zip_set.insert(address.zip.clone());
 
         area_map.entry(
-            address.zip,
+            zipcode.clone().replace("\"", ""),
             format!(
                 r#"Area {{
-                    prefecture: "{}",
-                    city: "{}",
-                    address: "{}",
+                    prefecture: {},
+                    city: {},
+                    address: {},
                 }}"#,
-                address.pref_kana, address.city_kana, address.town_kana,
+                pref, city, town,
             )
             .as_str(),
         );
+        zip_set.insert(zipcode);
     }
 
     write!(
@@ -65,6 +63,29 @@ fn generate_area_table(source_path: PathBuf, dest_path: PathBuf) -> Result<(), &
     .unwrap();
 
     write!(&mut dest_file, ";\n").unwrap();
-
     Ok(())
+}
+
+fn load_address_csv(path: PathBuf) -> Result<DataFrame, &'static str> {
+    let mut schema = Schema::with_capacity(7);
+    schema.with_column("zipcode".into(), DataType::String);
+    schema.with_column("pref".into(), DataType::String);
+    schema.with_column("city".into(), DataType::String);
+    schema.with_column("town".into(), DataType::String);
+    schema.with_column("pref_roma".into(), DataType::String);
+    schema.with_column("city_roma".into(), DataType::String);
+    schema.with_column("town_roma".into(), DataType::String);
+    println!("{:?}", schema);
+
+    // load no header csv
+    let df = CsvReadOptions::default()
+        .with_has_header(false)
+        .with_schema(Some(Arc::new(schema)))
+        .try_into_reader_with_file_path(Some(path.into()))
+        .expect("Failed to read CSV")
+        .finish()
+        .expect("Failed to finish CSV");
+
+    println!("{:?}", df.head(Some(10)));
+    Ok(df)
 }

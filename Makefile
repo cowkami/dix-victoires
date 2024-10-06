@@ -1,6 +1,4 @@
 BUILD := interim
-DB_CSV := $(BUILD)/address.csv
-DB_JSON := $(BUILD)/address.json
 
 run:
 	trunk serve
@@ -8,21 +6,26 @@ run:
 $(BUILD):
 	mkdir -p $(BUILD)
 
-$(DB_CSV): $(BUILD)
+address.csv: $(BUILD)
 	@echo "Downloading address database..."
-	wget --quiet https://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip -O $(BUILD)/KEN_ALL.zip
-	unzip -o $(BUILD)/KEN_ALL.zip -d $(BUILD)
-	mv $(BUILD)/KEN_ALL.CSV $(BUILD)/address.csv
+	wget --quiet https://www.post.japanpost.jp/zipcode/dl/roman/KEN_ALL_ROME.zip -O $(BUILD)/KEN_ALL_ROME.zip
+	@echo "Download completed!\n"
 
-$(DB_JSON): $(DB_CSV)
+	@echo "Unzipping address database..."
+	unzip -o $(BUILD)/KEN_ALL_ROME.zip -d $(BUILD)
+	mv $(BUILD)/KEN_ALL_ROME.csv $(BUILD)/address_sjis.csv
+	@echo "Unzipping completed!\n"
+
+	@echo "\nConverting address database encoding from Shift-JIS to UTF-8..."
+	iconv -f SHIFT-JIS -t UTF-8 $(BUILD)/address_sjis.csv > $(BUILD)/address.csv
+	@echo "Conversion completed!\n"
+
+area.csv: address.csv
 	@echo "Building address database..."
-	docker build -t address-processor -f docker/Dockerfile.db .
-	docker run --rm -it -v ${PWD}/$(BUILD):/work address-processor ken-all address address.csv -t json > $(BUILD)/address.jsonl
 
-build: $(DB_JSON)
+build: area.csv
 	@echo "Build completed!"
 
 clean:
 	rm -rf $(BUILD)
 	docker rmi address-processor
-

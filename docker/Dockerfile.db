@@ -1,6 +1,0 @@
-# syntax=docker/dockerfile:1
-
-FROM golang:1.19
-
-WORKDIR /work
-RUN go install github.com/inouet/ken-all@latest
